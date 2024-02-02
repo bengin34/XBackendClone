@@ -24,10 +24,14 @@ router.post("/", async (req, res) => {
 //list tweets
 router.get("/", async (req, res) => {
   try {
-    const allTweets = await prisma.tweet.findMany();
+    const allTweets = await prisma.tweet.findMany({
+      include: {
+        user: { select: { id: true, name: true, username: true, image: true } },
+      },
+    });
     res.json(allTweets);
   } catch (error) {
-    res.status(400).json({ error:"Tweet list error"});
+    res.status(400).json({ error: "Tweet list error" });
   }
 });
 
@@ -67,7 +71,7 @@ router.delete("/:id", async (req, res) => {
     await prisma.tweet.delete({ where: { id: Number(id) } });
     res.sendStatus(200);
   } catch (error) {
-    res.status(400).json({ error: "Delete error"});
+    res.status(400).json({ error: "Delete error" });
   }
 });
 
