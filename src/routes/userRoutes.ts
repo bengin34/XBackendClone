@@ -17,8 +17,8 @@ router.post("/", async (req, res) => {
       },
     });
     res.json(result);
-  } catch (e) {
-    res.status(400).json({ error: e.message });
+  } catch (error) {
+    res.status(400).json({ error: "User create error" });
   }
 });
 
@@ -32,9 +32,13 @@ router.get("/", async (req, res) => {
 //get one user
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-
+try {
   const user = await prisma.user.findUnique({ where: { id: Number(id) } });
   res.json(user);
+} catch (error) {
+  res.status(404).json({ error: "User not found!" });
+}
+
 });
 
 //update user
@@ -51,11 +55,9 @@ router.put("/:id", async (req, res) => {
       },
     });
     res.json(result);
-  } catch (e) {
-    res.status(400).json({ error: e.message });
+  } catch (error) {
+    res.status(400).json({ error: "Update error" });
   }
-
-  res.status(501).json({ error: `Not implemented: ${id}` });
 });
 
 //delete user
@@ -65,8 +67,9 @@ router.delete("/:id", async (req, res) => {
    await prisma.user.delete({
       where: { id: Number(id) },
     });
-  } catch (e) {
-    res.status(400).json({ error: e.message });
+    res.sendStatus(200)
+  } catch (error) {
+    res.status(400).json({ error: "User delete error" });
   }
 });
 
