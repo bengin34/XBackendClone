@@ -27,7 +27,6 @@ router.post("/login", async (req, res) => {
       },
     });
 
-    console.log(createdToken);
     res.sendStatus(200);
   } catch (e) {
     console.log(e);
