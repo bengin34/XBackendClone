@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as help from "../util/helpers";
 import { PrismaClient } from "@prisma/client";
+import { sendEmailToken } from "../services/emailService";
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -26,7 +27,7 @@ router.post("/login", async (req, res) => {
         },
       },
     });
-
+    await sendEmailToken(email, emailToken);
     res.sendStatus(200);
   } catch (e) {
     console.log(e);
@@ -75,12 +76,12 @@ router.post("/authenticate", async (req, res) => {
 
   //Invalidate the email
   await prisma.token.update({
-    where: {id : dbEmailToken.id},
-    data: { valid: false}
-  })
+    where: { id: dbEmailToken.id },
+    data: { valid: false },
+  });
 
   //generate the JWT token
-const authToken = help._generateAuthToken(apiToken.id);
+  const authToken = help._generateAuthToken(apiToken.id);
   res.json({ authToken });
 });
 

@@ -1,24 +1,23 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
-
-
-require('dotenv').config()
+import { error } from "console";
+require("dotenv").config();
 
 const ses = new SESClient({});
 
-const createSendEmailCommmand = (
-  toAdress: string,
+function createSendEmailCommand(
+  toAddress: string,
   fromAddress: string,
   message: string,
-) => {
+) {
   return new SendEmailCommand({
     Destination: {
-      ToAddresses: [toAdress],
+      ToAddresses: [toAddress],
     },
     Source: fromAddress,
     Message: {
       Subject: {
         Charset: "UTF-8",
-        Data: "Your Email Token",
+        Data: "Your one-time password",
       },
       Body: {
         Text: {
@@ -28,23 +27,22 @@ const createSendEmailCommmand = (
       },
     },
   });
-};
+}
 
-export const sendEmailToken = async (email: string, token: string) => {
-  console.log("email sent to: ", email, token);
+export async function sendEmailToken(email: string, token: string) {
+  console.log("email: ", email, token);
 
-  const message = `Your email token is: ${token}`;
-  const command = createSendEmailCommmand(
+  const message = `Your one time password: ${token}`;
+  const command = createSendEmailCommand(
     email,
-    "becaglar3434@gmail.com",
+    "savinvadim1312@gmail.com",
     message,
   );
 
   try {
     return await ses.send(command);
-  } catch (error) {
-    console.log("Error sending email: ", error);
+  } catch (e) {
+    console.log("Error sending email", e);
+    return error;
   }
-};
-
-sendEmailToken("caglarburakengin@gmail.com", "123456");
+}
